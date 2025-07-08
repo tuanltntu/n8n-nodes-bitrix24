@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "lib": ["es2019", "es2020", "es2021"],
+    "module": "commonjs",
+    "target": "es2019",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "declaration": true,
+    "strict": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["nodes/**/*.ts", "credentials/**/*.ts", "*.ts"],
+  "exclude": ["nodes/**/descriptions_backup/**/*"]
+} 

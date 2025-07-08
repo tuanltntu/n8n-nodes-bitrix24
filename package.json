@@ -1,0 +1,86 @@
+{
+  "name": "n8n-nodes-bitrix24",
+  "version": "0.5.0",
+  "description": "Comprehensive n8n community node for Bitrix24 API integration with CRM, Tasks, Chat, Telephony, and more",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "bitrix24",
+    "crm",
+    "api",
+    "automation",
+    "workflow",
+    "integration",
+    "business",
+    "lead-management",
+    "contact-management",
+    "deal-management",
+    "task-management",
+    "chat",
+    "telephony"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/tuanltntu/n8n-nodes-bitrix24#readme",
+  "author": {
+    "name": "Tuan Le",
+    "email": "tuanltntu@gmail.com",
+    "url": "https://github.com/tuanltntu"
+  },
+  "funding": {
+    "type": "paypal",
+    "url": "https://paypal.me/tuanltntu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuanltntu/n8n-nodes-bitrix24.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tuanltntu/n8n-nodes-bitrix24/issues"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier --write '**/*.ts'",
+    "lint": "eslint . --ext .ts",
+    "lintfix": "eslint . --ext .ts --fix",
+    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/Bitrix24Api.credentials.js",
+      "dist/credentials/Bitrix24OAuth.credentials.js",
+      "dist/credentials/Bitrix24Webhook.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Bitrix24/Bitrix24.node.js"
+    ]
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^22.14.1",
+    "@types/request-promise-native": "~1.0.18",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "eslint": "^8.41.0",
+    "eslint-plugin-n8n-nodes-base": "^1.0.0",
+    "gulp": "^5.0.1",
+    "n8n-core": "1.97.1",
+    "n8n-workflow": "1.96.0",
+    "prettier": "^2.8.8",
+    "typescript": "~4.9.5"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "request-promise-native": "^0.0.0"
+  }
+}
