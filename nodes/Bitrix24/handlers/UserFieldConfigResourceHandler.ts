@@ -123,7 +123,7 @@ export class UserFieldConfigResourceHandler extends ResourceHandlerBase {
   private convertToCamelCase(fieldData: IDataObject): IDataObject {
     const camelCaseData: IDataObject = {};
 
-    // Map of uppercase keys to camelCase
+    // Map of uppercase keys to API expected format (based on Bitrix24 docs)
     const keyMap: { [key: string]: string } = {
       ENTITY_ID: "entityId",
       FIELD_NAME: "fieldName",
@@ -142,39 +142,24 @@ export class UserFieldConfigResourceHandler extends ResourceHandlerBase {
       SETTINGS: "settings",
       DEFAULT_VALUE: "defaultValue",
       USER_TYPE_SETTINGS: "userTypeSettings",
+      // Keep enum as-is (lowercase)
+      enum: "enum",
     };
 
-    // First, explicitly handle the form labels to prevent circular references
-    if (fieldData.EDIT_FORM_LABEL) {
-      camelCaseData[keyMap.EDIT_FORM_LABEL || "editFormLabel"] =
-        fieldData.EDIT_FORM_LABEL;
-
-      // Set default labels if not already set
-      if (!fieldData.LIST_COLUMN_LABEL) {
-        camelCaseData[keyMap.LIST_COLUMN_LABEL || "listColumnLabel"] =
-          fieldData.EDIT_FORM_LABEL;
-      }
-
-      if (!fieldData.LIST_FILTER_LABEL) {
-        camelCaseData[keyMap.LIST_FILTER_LABEL || "listFilterLabel"] =
-          fieldData.EDIT_FORM_LABEL;
-      }
-    }
-
-    // Convert each key to camelCase
+    // Process each field
     for (const [key, value] of Object.entries(fieldData)) {
-      // Skip labels we've already processed
-      if (
-        key === "EDIT_FORM_LABEL" ||
-        (key === "LIST_COLUMN_LABEL" && !value && fieldData.EDIT_FORM_LABEL) ||
-        (key === "LIST_FILTER_LABEL" && !value && fieldData.EDIT_FORM_LABEL)
-      ) {
+      // Handle special cases first
+      if (key === "enum") {
+        // Keep enum as-is for enumeration fields
+        camelCaseData.enum = value;
         continue;
       }
 
+      // Convert key using mapping or default camelCase conversion
       const camelKey =
         keyMap[key] ||
         key.toLowerCase().replace(/_([a-z])/g, (m, p1) => p1.toUpperCase());
+
       camelCaseData[camelKey] = value;
     }
 
@@ -261,11 +246,11 @@ export class UserFieldConfigResourceHandler extends ResourceHandlerBase {
       ) as string;
 
       // Get the field name and add the appropriate prefix
-      const fieldCode = this.getNodeParameter("fieldCode", itemIndex) as string;
+      const fieldName = this.getNodeParameter("fieldName", itemIndex) as string;
       const prefix = this.getFieldNamePrefix(fieldData.ENTITY_ID as string);
-      fieldData.FIELD_NAME = fieldCode.startsWith(prefix)
-        ? fieldCode.toUpperCase()
-        : `${prefix}${fieldCode.toUpperCase()}`;
+      fieldData.FIELD_NAME = fieldName.startsWith(prefix)
+        ? fieldName.toUpperCase()
+        : `${prefix}${fieldName.toUpperCase()}`;
 
       // Get the field label and set all form labels
       const label = this.getNodeParameter("fieldLabel", itemIndex) as string;
@@ -346,23 +331,29 @@ export class UserFieldConfigResourceHandler extends ResourceHandlerBase {
         enumValues.values.length > 0 &&
         fieldData.USER_TYPE_ID === "enumeration"
       ) {
-        // Get or create settings object
-        const settings = (fieldData.SETTINGS as IDataObject) || {};
+        // Create enum array directly (not in SETTINGS)
         const enumItems: IDataObject[] = [];
 
         // Process each enum value
         for (const enumValue of enumValues.values as IDataObject[]) {
           if (enumValue.VALUE) {
             enumItems.push({
-              VALUE: enumValue.VALUE,
-              SORT: enumValue.SORT || 100,
+              value: enumValue.VALUE, // Use lowercase 'value' as per API docs
+              def: "N", // Default value flag
+              sort: enumValue.SORT || 100,
             });
           }
         }
 
         if (enumItems.length > 0) {
-          settings.ENUM = enumItems;
-          fieldData.SETTINGS = settings;
+          // Set first item as default if no default is specified
+          if (
+            enumItems.length > 0 &&
+            !enumItems.some((item) => item.def === "Y")
+          ) {
+            enumItems[0].def = "Y";
+          }
+          fieldData.enum = enumItems; // Use 'enum' directly, not in SETTINGS
         }
       }
 
@@ -374,7 +365,7 @@ export class UserFieldConfigResourceHandler extends ResourceHandlerBase {
         }
 
         console.log("Adding CRM field type settings for field", {
-          fieldCode,
+          fieldName,
           entityId: fieldData.ENTITY_ID,
         });
 

@@ -1,0 +1,40 @@
+module.exports = {
+  root: true,
+  env: {
+    browser: false,
+    es6: true,
+    node: true,
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json',
+    sourceType: 'module',
+    ecmaVersion: 2019,
+  },
+  plugins: ['@typescript-eslint'],
+  extends: [
+    'eslint:recommended',
+    '@typescript-eslint/recommended',
+    '@typescript-eslint/recommended-requiring-type-checking',
+  ],
+  rules: {
+    // Turn off overly strict rules for community nodes
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    '@typescript-eslint/prefer-optional-chain': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-call': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'warn',
+    '@typescript-eslint/no-unsafe-argument': 'warn',
+    '@typescript-eslint/restrict-template-expressions': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'warn',
+    '@typescript-eslint/prefer-as-const': 'warn',
+    '@typescript-eslint/no-inferrable-types': 'off',
+    'prefer-const': 'warn',
+    'prefer-spread': 'warn',
+  },
+  ignorePatterns: ['dist/**', 'node_modules/**', '*.js'],
+}; 

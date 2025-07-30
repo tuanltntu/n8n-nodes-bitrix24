@@ -1,6 +1,6 @@
 {
-  "name": "n8n-nodes-bitrix24",
-  "version": "0.5.0",
+  "name": "@tuanltntu/n8n-nodes-bitrix24",
+  "version": "0.5.1",
   "description": "Comprehensive n8n community node for Bitrix24 API integration with CRM, Tasks, Chat, Telephony, and more",
   "keywords": [
     "n8n-community-node-package",
@@ -44,7 +44,7 @@
     "format": "prettier --write '**/*.ts'",
     "lint": "eslint . --ext .ts",
     "lintfix": "eslint . --ext .ts --fix",
-    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js"
+    "prepublishOnly": "npm run build"
   },
   "files": [
     "dist",

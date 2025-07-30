@@ -767,6 +767,164 @@ export class Bitrix24 implements INodeType {
           ];
         }
       },
+
+      // Load Smart Process Types for User Field Config
+      async getUserFieldSmartProcessTypes(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        try {
+          console.log("Loading Smart Process types for User Field Config");
+
+          // Use crm.type.list to get Smart Process types
+          const response = await makeStandardBitrix24Call.call(
+            this,
+            "crm.type.list",
+            {},
+            {}
+          );
+
+          console.log(
+            "Smart Process API response:",
+            JSON.stringify(response, null, 2)
+          );
+
+          if (!response.result) {
+            console.log("No result in Smart Process API response");
+            return [
+              {
+                name: "No Smart Process types available",
+                value: "",
+                description: "No Smart Process types found",
+              },
+            ];
+          }
+
+          // Handle response structure - it's response.result.types, not response.result directly
+          let types = [];
+          if (response.result.types) {
+            types = response.result.types;
+          } else if (Array.isArray(response.result)) {
+            types = response.result;
+          } else {
+            types = Object.values(response.result);
+          }
+
+          const options: INodePropertyOptions[] = [];
+
+          console.log("Processing Smart Process types:", types.length);
+
+          for (const type of types) {
+            if (type.id && type.title) {
+              const value = `CRM_${type.id}`;
+              options.push({
+                name: `${type.title} (ID: ${type.id})`,
+                value: value,
+                description: `Smart Process: ${type.title} - Entity ID: ${value}`,
+              });
+            }
+          }
+
+          console.log("Returning Smart Process options:", options.length);
+          return options;
+        } catch (error) {
+          console.error("Error in getUserFieldSmartProcessTypes:", error);
+          return [
+            {
+              name: "Error loading Smart Process types",
+              value: "",
+              description: `Failed to load Smart Process types: ${error.message}`,
+            },
+          ];
+        }
+      },
+
+      // Load User Field Config List Options for select field
+      async getUserFieldConfigListOptions(
+        this: ILoadOptionsFunctions
+      ): Promise<INodePropertyOptions[]> {
+        try {
+          // Standard user field configuration options
+          return [
+            { name: "ID", value: "ID", description: "Configuration ID" },
+            {
+              name: "Field Name",
+              value: "FIELD_NAME",
+              description: "Field name",
+            },
+            {
+              name: "Entity ID",
+              value: "ENTITY_ID",
+              description: "Entity identifier",
+            },
+            {
+              name: "User Type ID",
+              value: "USER_TYPE_ID",
+              description: "Field type",
+            },
+            {
+              name: "Edit Form Label",
+              value: "EDIT_FORM_LABEL",
+              description: "Form label",
+            },
+            {
+              name: "List Column Label",
+              value: "LIST_COLUMN_LABEL",
+              description: "List column label",
+            },
+            {
+              name: "List Filter Label",
+              value: "LIST_FILTER_LABEL",
+              description: "Filter label",
+            },
+            {
+              name: "Multiple",
+              value: "MULTIPLE",
+              description: "Multiple values allowed",
+            },
+            {
+              name: "Mandatory",
+              value: "MANDATORY",
+              description: "Required field",
+            },
+            {
+              name: "Show in List",
+              value: "SHOW_IN_LIST",
+              description: "Show in list view",
+            },
+            {
+              name: "Edit in List",
+              value: "EDIT_IN_LIST",
+              description: "Editable in list",
+            },
+            {
+              name: "Show Filter",
+              value: "SHOW_FILTER",
+              description: "Show filter option",
+            },
+            {
+              name: "Is Searchable",
+              value: "IS_SEARCHABLE",
+              description: "Searchable field",
+            },
+            {
+              name: "Settings",
+              value: "SETTINGS",
+              description: "Field settings",
+            },
+            { name: "Sort", value: "SORT", description: "Sort order" },
+            { name: "XML ID", value: "XML_ID", description: "External ID" },
+          ];
+        } catch (error) {
+          console.error("Error in getUserFieldConfigListOptions:", error);
+          return [
+            {
+              name: "Error loading options",
+              value: "",
+              description: `Failed to load options: ${error.message}`,
+            },
+          ];
+        }
+      },
     },
   };
 
